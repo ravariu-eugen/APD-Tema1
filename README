@@ -1,0 +1,44 @@
+    Pentru a implementa tema am folosit c++ pentru a avea acces la clase 
+si pentru a folosi structura de date set pentru a numara elementele unice.
+    Clasa Solver este folosita pentru a memora toate datele necesare rezolvarii 
+problemei:
+Campuri folosite
+    mapperCount     = numarul de thread-uri mapper
+    reducerCount    = numarul de thread-uri reducer
+    task_files      = vector cu numele fisierelor de procesat
+    current_task    = iterator la numele urmatorului fisier de procesat
+    partialResults  = vector ce contine datele partiale pentru fiecare reducer
+                    fiecarui reducer ii corespunde un vector de (void *), 
+                    fiecare pointer reprezentand un rezultat partial obtinut de
+                    la un fisier
+    mappers         = array de thread-uri mapper
+    reducers        = array de thread-uri reducer
+    mapFunction     = functia de map
+    reduceFunction  = functia de reduce
+    finishMap_barrier = bariera folosita pentru a asigura ca functia de reduce se
+                        aplica numai dupa ce functia de map a fost aplicata pe
+                        toate fisierele
+    getTaskFile_mutex = mutex folosit pentru a asigura ca numai un singur thread 
+                        poate primi un nou fisier
+
+    partialResult_mutex = array de mutex-uri; fiecare mutex corespunde unui thread 
+                        reducer pentru a asigura ca cel mult un thread mapper poate
+                        adauga o valoare partiala in vectorul corespunzator
+
+
+
+    Pentru a face ca functia de reduce din thread-urile de reduce sa ruleze numai 
+dupa ce toate fisierele au fost procesate, folosim o bariera ce asteapta 
+mapperCount + reducerCount thread-uri.
+    La inceput, thread-urile reducer asteapta toate la bariera, iar thread-urile
+mapper proceseaza fisere.
+    Cand termina de procesat un fisier, thread-ul cere unul nou, iar daca nu mai
+sunt, atunci va ajunge la bariera.
+    Cand toate fisierele au fost procesate, atunci toate thread-urile mapper au 
+ajuns la bariere. In acest moment, toate thread-urile sunt eliberate.
+    Thread-urile mapper se incheie, iar thread-urile reducer incep sa proceseze 
+rezultatele partiale obtinute de la mapper.
+
+    Pentru a determina daca un numar este o putere perfecta, incerc sa gasesc 
+radacina de ordin n intreaga. Acest lucru este realizat folosind cautarea binara 
+    

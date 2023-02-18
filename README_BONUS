@@ -1,0 +1,42 @@
+Detalii Implementare Genericitate
+
+    
+
+    Constructorul pentru clasa Solver primeste ca parametrii numarul de thread-uri 
+map si de thread-uri reducer, fisierul ce contine numele fisierelor ce urmeaza a fi 
+procesate, si pointer la functia de map si la cea de reduce.
+    Functia de map este folosita in cadrul thread-ului de map pentru a obtine 
+rezultatele partiale. Aceasta are ca parametri numele fiserului ce trebuie 
+procesat si numarul de chei.
+
+    In modelul Map-Reduce, numarul de chei este egal cu numarul de thread-uri reduce,
+intrucat fiecare thread reduce proceseaza datele partiale asociate unei anumite chei.
+De aceea, fiecare cheie poate fi asociata unei valori de la 0 la (reducerCount-1), 
+deci functia de map si de reduce pot determina cheile in functie de valorile posibile. 
+    De exemplu, pentru problema data si reducerCount = 4, cheile sunt exponentii
+2, 3, 4, 5.
+
+    Functia Map citeste valorile din fisier si intoarce un pointer la un vector cu
+reducerCount pointeri. Pointer-ul i ( 0 <= i <= reducerCount-1) va indica la o 
+structura folosita ce reprezinta valorile partiale asociate cheii i.
+    De exemplu, pentru problema data, map va intoarce un vector cu 4 pointer la
+structuri de date de tip unordered_set, fiecare continand puteri perfecte cu 
+exponentul corespunzator pozitiei in vector (ex: al doilea set contine cuburile
+perfecte unice).
+
+    Apoi, in cadrul clasei Solver, valorile partiale obtinute de la fiecare fisier
+sunt impartite in functie de cheia asociata, obtinandu-se un vector ce contine
+reducerCount vectori de pointeri, fiecare avand un numar de pointeri egal cu 
+numarul total de fisiere.
+
+    Functia de reduce este folosita in cadrul thread-ului de reduce pentru a obtine
+rezultatele finale. Aceasta are ca parametri id-ul threadului de reduce si vectorul
+de rezultate partiale. Folosind id-ul, functia determina cheia asociata vectorului.
+Folosind datele partiale, functia calculeaza valorile finale asociate cheii si le 
+scrie intr-un fisier.
+    De exemplu, pentru problema data, functia reducer cu id-ul i va scrie in
+fisierul out$(i+2).txt numarul de valori unice ce sunt puteri perfecte cu 
+exponentul i+2.
+
+    Pentru a schimba problema rezolvata, trebuie doar sa fie schimbate functiile
+map si reduce date clasei Solver si fisierul de intrare.
